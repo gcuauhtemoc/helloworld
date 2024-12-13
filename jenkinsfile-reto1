@@ -1,47 +1,48 @@
 pipeline {
-    agent any
+	agent any
 
-    stages {
-        stage('GetCode') {
+	stages {
+		stage ('GetCode'){
+		steps {
+			git 'https://github.com/gcuauhtemoc/helloworld'
+			
+		}
+	}
+        stage('Build'){
             steps {
-                git 'https://github.com/gcuauhtemoc/helloworld'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'NO HAY QUE COMPILAR NADA.'
+                echo 'NADA QUE COMPILAR'
                 bat "dir"
             }
         }
-        stage('Testing') {
-            parallel {
-                stage('Unit') {
-                    steps {
-                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                            bat '''
-                                set PYTHONPATH=%WORKSPACE%
-                                C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
-                            '''
-                        }
-                    }
-                }
-                stage('Rest') {
-                    steps {
-                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                            bat '''
-                                set FLASK_APP=app\\api.py
-                                start C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\flask run
-                                set PYTHONPATH=%WORKSPACE%
-                                start java -jar C:\\Users\\DevOps\\Documents\\Instaladores_complementos\\wiremock-standalone-3.10.0.jar --port 9090 --root-dir C:\\Users\\DevOps\\Documents\\Labs\\helloworld\\test\\wiremock
-                                timeout /t 10 >nul
-                                C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-rest.xml test\\rest
-                            '''
-                        }
-                    }
+        stage('Testing'){
+            parallel{
+        stage('Unit'){
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                bat '''
+                    set PYTHONPATH=%WORKSPACE%
+                    C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
+                    '''
                 }
             }
         }
-        stage('Results') {
+        stage('Rest'){
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                bat '''
+                set FLASK_APP=app\\api.py
+                start  C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\flask run
+                set PYTHONPATH=%WORKSPACE%
+                start java -jar C:\\Users\\DevOps\\Documents\\Instaladores_complementos\\wiremock-standalone-3.10.0.jar --port 9090 --root-dir C:\\Users\\DevOps\\Documents\\Labs\\helloworld\\test\\wiremock
+                ping -n 11 127.0.0.1
+                C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-rest.xml test\\rest
+                '''
+                }
+            }
+        }
+            }
+        }
+        stage ('Results'){
             steps {
                 junit 'result*.xml'
             }
