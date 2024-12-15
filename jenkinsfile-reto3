@@ -1,0 +1,89 @@
+pipeline {
+	agent none
+
+	stages {
+		stage ('GetCode'){
+		agent { label 'master' }
+		steps {
+		    bat "whoami"
+		    bat "hostname"
+		    echo "WORKSPACE: ${env.WORKSPACE}"
+			git branch: 'develop', url: 'https://github.com/gcuauhtemoc/helloworld'
+			stash includes: '**', name: 'codigo'
+		}
+	}
+        stage('Build'){
+	    agent { label 'master' }
+            steps {
+                bat "whoami"
+                bat "hostname"
+                echo "WORKSPACE: ${env.WORKSPACE}"
+		unstash 'codigo'
+                echo 'NADA QUE COMPILAR'
+                bat "dir"
+            }
+        }
+        stage('Testing'){
+            parallel{
+        stage('Unit'){
+            agent { label 'agente03' }
+            steps {
+                bat "whoami"
+                bat "hostname"
+                echo "WORKSPACE: ${env.WORKSPACE}"
+                unstash 'codigo'
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                bat '''
+                    set PYTHONPATH=%WORKSPACE%
+                    C:\\Users\\Agente01W\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
+                    '''
+                }
+                stash includes: 'result-unit.xml', name: 'resultados-unit'
+            }
+        }
+        stage('Rest'){
+            agent { label 'agente04' }
+            steps {
+                bat "whoami"
+                bat "hostname"
+                echo "WORKSPACE: ${env.WORKSPACE}"
+                unstash 'codigo'
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                bat '''
+                set FLASK_APP=app\\api.py
+                start  C:\\Users\\Agente02W\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\flask run
+                set PYTHONPATH=%WORKSPACE%
+                start java -jar C:\\Users\\Agente02W\\Documents\\Instaladores_complementos\\wiremock-standalone-3.10.0.jar --port 9090 --root-dir C:\\Users\\Agente02W\\Documents\\Test\\Wiremock
+                ping -n 11 127.0.0.1
+                C:\\Users\\Agente02W\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-rest.xml test\\rest
+                '''
+                }
+                stash includes: 'result-rest.xml', name: 'resultados-rest'
+            }
+        }
+            }
+        }
+        stage ('Results'){
+            agent { label 'master' }
+            steps {
+                bat "whoami"
+                bat "hostname"
+                echo "WORKSPACE: ${env.WORKSPACE}"
+                unstash 'resultados-unit'
+                unstash 'resultados-rest'
+                junit 'result*.xml'
+            }
+        }
+    stage('Clean'){
+        agent { label 'master' }
+        steps {
+            bat "whoami"
+            bat "hostname"
+            echo "WORKSPACE: ${env.WORKSPACE}"
+            cleanWs(
+                deleteDirs: true,
+                patterns: [[pattern:'result*.xml', type: 'EXCLUDE']])
+            }
+        }
+    }
+}
