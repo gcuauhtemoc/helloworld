@@ -54,13 +54,14 @@ class TestApi(unittest.TestCase):
         self.assertEqual(
             response.read().decode(), "4.0", "ERROR DIVIDE"
         )
-   def test_api_divide_by_zero(self):
-       url = f"{BASE_URL}/calc/divide/8/0"
-       with self.assertRaises(Exception) as context:
-           response = urlopen(url, timeout=DEFAULT_TIMEOUT)
-       self.assertEqual(
-           context.exception.code, http.client.NOT_ACCEPTABLE, "ERROR-DIVISION ENTRE 0"
-       )
+
+    def test_api_divide_by_zero(self):
+        url = f"{BASE_URL}/calc/divide/8/0"
+        with self.assertRaises(Exception) as context:
+            urlopen(url, timeout=DEFAULT_TIMEOUT)
+        self.assertEqual(
+            context.exception.code, http.client.NOT_ACCEPTABLE, "ERROR DIVISION ENTRE 0"
+        )
 
 
 if __name__ == "__main__":  # pragma: no cover
