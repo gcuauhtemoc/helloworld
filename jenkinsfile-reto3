@@ -8,7 +8,7 @@ pipeline {
 		    bat "whoami"
 		    bat "hostname"
 		    echo "WORKSPACE: ${env.WORKSPACE}"
-			git 'https://github.com/gcuauhtemoc/helloworld'
+			git url: 'https://github.com/gcuauhtemoc/helloworld', branch: 'develop'
 			stash includes: '**', name: 'codigo'
 		}
 	}
