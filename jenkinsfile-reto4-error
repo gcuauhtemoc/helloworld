@@ -34,7 +34,7 @@ pipeline {
                         start /B C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\flask run
                         set PYTHONPATH=%WORKSPACE%
                         start /B java -jar C:\\Users\\DevOps\\Documents\\Instaladores_complementos\\wiremock-standalone-3.10.0.jar --port 9090 --root-dir C:\\Users\\DevOps\\Documents\\Labs\\helloworld\\test\\wiremock
-			C:\\Users\\DevOps\\Documents\\Instaladores_complementos\\tcping.exe -c 10 127.0.0.1 9090
+			C:\\Users\\DevOps\\Documents\\Instaladores_complementos\\tcping.exe -n 10 127.0.0.1 9090
                         C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-rest.xml test\\rest
                     '''
                 }
