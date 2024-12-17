@@ -14,14 +14,13 @@ pipeline {
                 bat "dir"
             }
         }
-        stage('Testing'){
         stage('Unit'){
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                 bat '''
                     set PYTHONPATH=%WORKSPACE%
                     C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
-                    '''
+              }      '''
             }
         }
         stage('Rest'){
