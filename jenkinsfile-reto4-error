@@ -15,7 +15,6 @@ pipeline {
             }
         }
         stage('Testing'){
-            parallel{
         stage('Unit'){
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
@@ -23,7 +22,6 @@ pipeline {
                     set PYTHONPATH=%WORKSPACE%
                     C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
                     '''
-                }
             }
         }
         stage('Rest'){
