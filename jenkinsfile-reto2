@@ -92,7 +92,7 @@ pipeline {
 		        echo "WORKSPACE: ${env.WORKSPACE}"
                 unstash 'coverage-data'
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '95,0,95', lineCoverageTargets: '90,0,90'
+                    cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,0,95', lineCoverageTargets: '100,0,90'
                 }
             }
         }
