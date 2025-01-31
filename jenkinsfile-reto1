@@ -13,7 +13,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                 bat '''
                     set PYTHONPATH=%WORKSPACE%
-                    C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\coverage run --branch --source=app --omit=app\\_init_.py.app\\api.py -m pytest test\\unit --junitxml=result-unit.xml
+                    C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\coverage run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest test\\unit --junitxml=result-unit.xml
                     C:\\Users\\DevOps\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\coverage xml
                     '''
                 }
