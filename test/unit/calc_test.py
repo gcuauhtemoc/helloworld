@@ -70,6 +70,9 @@ class TestCalculate(unittest.TestCase):
             self.calc.check_types("x", 5)
         with self.assertRaises(TypeError):
             self.calc.check_types("z", "y")
+        with self.assertRaises(TypeError):
+            self.calc.check_types(5, "x")
+            
         
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
